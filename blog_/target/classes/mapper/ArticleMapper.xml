@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dewitt.dao.ArticleDao">
+    <insert id="addNewArticle" parameterType="dewitt.entity.Article">
+        insert into article(username,title,pageView,shortcut,htmlContent,createTime) values (#{username},#{title},#{pageView},#{shortcut},#{htmlContent},#{createTime})
+    </insert>
+    <delete id="deleteArticleById" parameterType="Integer">
+        delete from article where id=#{id}
+    </delete>
+    <update id="updateArticle" parameterType="dewitt.entity.Article">
+        update article set pageView=pageView+1 where id=#{id}
+    </update>
+    <select id="getArticleById" parameterType="Integer" resultType="dewitt.entity.Article">
+        select * from article where id=#{id}
+    </select>
+    <select id="getArticleList" resultType="dewitt.entity.Article">
+        select * from article order by id desc limit #{start},#{end}
+    </select>
+    <select id="getArticleListByUsername" resultType="dewitt.entity.Article">
+        select * from article where username=#{username} order by id desc limit #{page},#{pagee}
+    </select>
+    <select id="getArticleCountSum" resultType="Integer">
+        select count(*) from article
+    </select>
+    <select id="getArticleCount" resultType="Integer">
+        select count(*) from article where username=#{username}
+    </select>
+</mapper>

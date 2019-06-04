@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <import resource="spring-dao.xml"/>
+    <!-- 配置不拦截的资源 -->
+    <security:http pattern="/logo1.ico" security="none"/>
+    <security:http pattern="/" security="none"/>
+    <!--<security:http pattern="/index" security="none"/>-->
+    <security:http pattern="/register" security="none"/>
+    <security:http pattern="/filer" security="none"/>
+    <security:http pattern="/login" security="none"/>
+    <security:http pattern="/css/**" security="none"/>
+    <security:http pattern="/img/**" security="none"/>
+    <security:http pattern="/fonts/**" security="none"/>
+    <security:http pattern="/js/**" security="none"/>
+    <security:http pattern="/lib/**" security="none"/>
+
+    <security:http auto-config="true" use-expressions="false">
+        <!-- 配置具体的拦截的规则 pattern="请求路径的规则" access="访问系统的人，必须有ROLE_USER的角色" -->
+        <security:intercept-url pattern="/**" access="ROLE_USER,ROLE_ADMIN"/>
+        <security:intercept-url pattern="/admin/*" access="ROLE_ADMIN"/>
+
+        <!-- 定义跳转的具体的页面 -->
+        <security:form-login
+                login-page="/login"
+                login-processing-url="/confirm"
+                default-target-url="/index"
+                authentication-failure-url="/filer"/>
+        <security:remember-me key="elim"/>
+
+        <!-- 关闭跨域请求 -->
+        <security:csrf disabled="true"/>
+        <!-- 退出 -->
+        <security:logout invalidate-session="true" logout-url="/logout" logout-success-url="/index" />
+
+    </security:http>
+
+
+    <!-- 配置加密类 -->
+    <!--<bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>-->
+
+    <!-- 提供了入门的方式，在内存中存入用户名和密码-->
+    <security:authentication-manager id="authenticationManager">
+        <security:authentication-provider>
+            <security:jdbc-user-service data-source-ref="dataSource"
+                                        users-by-username-query="select username,password,enabled from users where username=?"
+                                        authorities-by-username-query="select username,authority role from authorities where username=?"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+
+</beans>
